@@ -5,6 +5,9 @@ using UnityEngine.InputSystem;
 public class WeaponUser : MonoBehaviour
 {
     [SerializeField]
+    private WeaponHUD weaponHUD;
+
+    [SerializeField]
     private Transform weaponHolder;
 
     [SerializeField]
@@ -26,8 +29,11 @@ public class WeaponUser : MonoBehaviour
     public void DropWeapon()
     {
         currentWeapon.transform.parent = null;
-        currentWeapon.RB.isKinematic = false;
+        currentWeapon.TogglePhysics(true);
         currentWeapon.RB.AddForce(transform.forward * weaponThrowForce, ForceMode.Impulse);
+        currentWeapon.OnFire = null;
+        weaponHUD.Toggle(false);
+
 
     }
 
@@ -39,14 +45,19 @@ public class WeaponUser : MonoBehaviour
             {
                 currentWeapon = hit.collider.GetComponentInParent<Weapon>();
                 currentWeapon.transform.parent = weaponHolder;
-                currentWeapon.RB.isKinematic = true;
+                currentWeapon.TogglePhysics(false);
                 currentWeapon.transform.SetPositionAndRotation(weaponHolder.position, weaponHolder.rotation);
+                weaponHUD.Toggle(true);
+                weaponHUD.DisplayAmmoCount(currentWeapon.CurrentAmmo, currentWeapon.MaxAmmo);
+
+                currentWeapon.OnFire = null;
+                currentWeapon.OnFire += () => weaponHUD.DisplayAmmoCount(currentWeapon.CurrentAmmo, currentWeapon.MaxAmmo);
             }
         }
 
     }
 
-    public void OnInteraction(InputValue value)
+    private void OnInteraction(InputValue value)
     {
         if (!value.isPressed) return;
         if(currentWeapon)
@@ -56,6 +67,33 @@ public class WeaponUser : MonoBehaviour
         else
         {
             TryPickUpWeapon();
+        }
+    }
+
+    private void OnShoot(InputValue value)
+    {
+        if(currentWeapon != null)
+        {
+            if (value.isPressed)
+            {
+                currentWeapon.Fire();
+            }
+            else
+            {
+                currentWeapon.StopFire();
+            }
+
+        }
+    }
+
+    private void OnReload(InputValue value)
+    {
+        if (currentWeapon != null)
+        {
+            if (value.isPressed)
+            {
+                currentWeapon.Reload();
+            }
         }
     }
 }
