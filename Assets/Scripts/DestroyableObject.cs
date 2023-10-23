@@ -7,14 +7,19 @@ public class DestroyableObject : MonoBehaviour
     public UnityEvent onDestroy;
 
     [SerializeField]
-    private GameMaterialData materialData;
+    private MaterialType materialType;
 
-    private int currentDurability;
+    [SerializeField]
+    private float durability;
 
-    public void Damage(int damage)
+    [SerializeField]
+    private ParticleSystem destroyParticle;
+
+    public void Damage(float damage, MaterialType damageType)
     {
-        currentDurability -= damage;
-        if(currentDurability <= 0)
+        if (damageType != materialType) return;
+        durability -= damage;
+        if(durability <= 0)
         {
             DestroyObject();
         }
@@ -22,21 +27,17 @@ public class DestroyableObject : MonoBehaviour
 
     public void DestroyObject()
     {
+        destroyParticle.transform.parent = null;
+        destroyParticle.Play();
         onDestroy?.Invoke();
         Destroy(gameObject);
     }
-
-    public void Reset()
-    {
-        if(materialData)
-        {
-            currentDurability = materialData.Durability;
-        }
-    }
-
-    private void Awake()
-    {
-        
-    }
 }
 
+public enum MaterialType
+{
+    Default,
+    Wood,
+    Metal,
+    Concrete
+}

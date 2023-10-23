@@ -58,6 +58,15 @@
                     "processors": "",
                     "interactions": "",
                     "initialStateCheck": false
+                },
+                {
+                    "name": "Reload",
+                    "type": "Button",
+                    "id": "f0b9db9a-0eb9-469c-95c0-772ec87d4c90",
+                    "expectedControlType": "Button",
+                    "processors": "",
+                    "interactions": "",
+                    "initialStateCheck": false
                 }
             ],
             "bindings": [
@@ -231,7 +240,7 @@
                     "id": "b9d96773-45b3-47fe-864b-0f7e60d17fc3",
                     "path": "<Mouse>/delta",
                     "interactions": "",
-                    "processors": "",
+                    "processors": "Clamp(min=-1,max=1)",
                     "groups": "",
                     "action": "Look",
                     "isComposite": false,
@@ -242,7 +251,7 @@
                     "id": "ddf429f8-6d94-45b3-b9e7-05e329daf7d7",
                     "path": "<Gamepad>/rightStick",
                     "interactions": "",
-                    "processors": "",
+                    "processors": "Scale(factor=100)",
                     "groups": "",
                     "action": "Look",
                     "isComposite": false,
@@ -267,6 +276,28 @@
                     "processors": "",
                     "groups": "",
                     "action": "Interaction",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "2016ddae-f8c4-4c9b-b6d7-08b698826770",
+                    "path": "<Keyboard>/r",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Reload",
+                    "isComposite": false,
+                    "isPartOfComposite": false
+                },
+                {
+                    "name": "",
+                    "id": "13e067db-245f-4367-8673-9f2ce2243551",
+                    "path": "<Gamepad>/buttonNorth",
+                    "interactions": "",
+                    "processors": "",
+                    "groups": "",
+                    "action": "Reload",
                     "isComposite": false,
                     "isPartOfComposite": false
                 }

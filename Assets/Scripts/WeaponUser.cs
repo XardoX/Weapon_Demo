@@ -28,18 +28,20 @@ public class WeaponUser : MonoBehaviour
 
     public void DropWeapon()
     {
+        if (currentWeapon == null) return;
         currentWeapon.transform.parent = null;
         currentWeapon.TogglePhysics(true);
         currentWeapon.RB.AddForce(transform.forward * weaponThrowForce, ForceMode.Impulse);
         currentWeapon.OnFire = null;
+        currentWeapon.OnReloaded = null;
         weaponHUD.Toggle(false);
 
-
+        currentWeapon = null;
     }
 
     public void TryPickUpWeapon()
     {
-        if(Physics.Raycast(mainCamera.transform.position, mainCamera.transform.forward, out RaycastHit hit, pickUpDistance, pickUpLayerMask))
+        if(Physics.SphereCast(mainCamera.transform.position, 0.2f, mainCamera.transform.forward, out RaycastHit hit, pickUpDistance, pickUpLayerMask))
         {
             if(hit.collider.CompareTag("Weapon"))
             {
@@ -49,11 +51,27 @@ public class WeaponUser : MonoBehaviour
                 currentWeapon.transform.SetPositionAndRotation(weaponHolder.position, weaponHolder.rotation);
                 weaponHUD.Toggle(true);
                 weaponHUD.DisplayAmmoCount(currentWeapon.CurrentAmmo, currentWeapon.MaxAmmo);
+                weaponHUD.SetWeaponDescription(currentWeapon.ID, currentWeapon.DamageType.ToString());
 
                 currentWeapon.OnFire = null;
-                currentWeapon.OnFire += () => weaponHUD.DisplayAmmoCount(currentWeapon.CurrentAmmo, currentWeapon.MaxAmmo);
+                currentWeapon.OnFire += () => OnWeaponFired();
+                currentWeapon.OnReloaded = null;
+                currentWeapon.OnReloaded += () => OnWeaponReloaded();
+
             }
         }
+
+    }
+
+    private void OnWeaponFired()
+    {
+        weaponHUD.DisplayAmmoCount(currentWeapon.CurrentAmmo, currentWeapon.MaxAmmo);
+    }
+
+    private void OnWeaponReloaded()
+    {
+        weaponHUD.DisplayAmmoCount(currentWeapon.CurrentAmmo, currentWeapon.MaxAmmo);
+        weaponHUD.ToggleReloadSlider(false);
 
     }
 
@@ -90,9 +108,11 @@ public class WeaponUser : MonoBehaviour
     {
         if (currentWeapon != null)
         {
-            if (value.isPressed)
+            if (value.isPressed && currentWeapon.IsReloading == false)
             {
                 currentWeapon.Reload();
+                weaponHUD.ToggleReloadSlider(true);
+                weaponHUD.DisplayReloadTime(currentWeapon.ReloadTime);
             }
         }
     }
