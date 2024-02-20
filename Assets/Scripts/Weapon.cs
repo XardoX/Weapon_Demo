@@ -113,7 +113,7 @@ public class Weapon : MonoBehaviour
                 var destroyable = hit.collider.GetComponentInParent<DestroyableObject>();
                 destroyable.Damage(damage, damageType);
             }
-            hit.rigidbody?.AddForceAtPosition(bulletSpawn.transform.forward * firePower, hit.point);
+            hit.rigidbody.AddForceAtPosition(bulletSpawn.transform.forward * firePower, hit.point);
             Instantiate(bulletHole, hit.point, Quaternion.LookRotation(bulletSpawn.forward, bulletSpawn.up), hit.transform);
             trail.transform.DOMove(hit.point, trailDuration).OnComplete(() => Destroy(trail.gameObject));
 
@@ -150,9 +150,10 @@ public class Weapon : MonoBehaviour
     Tween recoil, recoilReturn, angleRecoil;
     private void Recoil()
     {
-        if (recoil != null) recoil.Kill();
-        if (recoilReturn != null) recoilReturn.Kill();
-        if (angleRecoil != null) angleRecoil.Kill();
+        recoil?.Kill();
+        recoilReturn?.Kill();
+        angleRecoil?.Kill();
+
         recoil = transform.DOLocalMoveZ(-recoilDistance, fireInterval/2).OnComplete(() =>  recoilReturn = transform.DOLocalMoveZ(0f, fireInterval/2));
         angleRecoil = transform.DOPunchRotation(new Vector3(recoilAngle, 0f, 0f), fireInterval / 2, 0, 0f);
 

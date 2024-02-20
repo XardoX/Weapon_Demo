@@ -19,6 +19,7 @@ public class DestroyableObject : MonoBehaviour
     {
         if (damageType != materialType) return;
         durability -= damage;
+
         if(durability <= 0)
         {
             DestroyObject();
